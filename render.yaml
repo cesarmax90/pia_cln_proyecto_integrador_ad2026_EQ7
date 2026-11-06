@@ -4,7 +4,6 @@ services:
     name: novarent-api
     runtime: docker
     dockerfilePath: ./Dockerfile
-    dockerTarget: produccion
     healthCheckPath: /salud
     envVars:
       - key: DATABASE_URL
