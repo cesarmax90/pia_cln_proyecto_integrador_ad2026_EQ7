@@ -1,0 +1,51 @@
+# Base de datos + aplicación + pruebas.
+#   docker compose up --build                       -> API en http://localhost:8000/docs
+#   docker compose --profile tests up --build --exit-code-from tests --abort-on-container-exit tests
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-novarent}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-novarent}
+      POSTGRES_DB: ${POSTGRES_DB:-novarent}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-novarent} -d ${POSTGRES_DB:-novarent}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      target: produccion
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-novarent}:${POSTGRES_PASSWORD:-novarent}@db:5432/${POSTGRES_DB:-novarent}
+      ENTORNO: ${ENTORNO:-docker}
+      CARGAR_DATOS_DEMO: ${CARGAR_DATOS_DEMO:-true}
+      PERMITIR_RELOJ_SIMULADO: ${PERMITIR_RELOJ_SIMULADO:-false}
+    ports:
+      - "8000:8000"
+    volumes:
+      - evidencias:/data/evidencias
+
+  tests:
+    profiles: ["tests"]
+    build:
+      context: .
+      target: pruebas
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Base separada: las pruebas recrean las tablas y no deben tocar los datos de la app
+      TEST_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-novarent}:${POSTGRES_PASSWORD:-novarent}@db:5432/novarent_test
+
+volumes:
+  pgdata:
+  evidencias:

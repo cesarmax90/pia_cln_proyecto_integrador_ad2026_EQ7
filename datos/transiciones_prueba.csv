@@ -1,0 +1,21 @@
+﻿caso_id,operacion_id,accion_sugerida,estado_inicial,resultado_alumno,instrucciones
+REN-S001,REN-O001,completar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S002,REN-O002,cancelar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S003,REN-O003,repetir_aprobacion,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S004,REN-O004,saltar_estado,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S005,REN-O005,aprobar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S006,REN-O006,completar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S007,REN-O007,cancelar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S008,REN-O008,repetir_aprobacion,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S009,REN-O009,saltar_estado,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S010,REN-O010,aprobar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S011,REN-O011,completar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S012,REN-O012,cancelar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S013,REN-O013,repetir_aprobacion,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S014,REN-O014,saltar_estado,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S015,REN-O015,aprobar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S016,REN-O016,completar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S017,REN-O017,cancelar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S018,REN-O018,repetir_aprobacion,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S019,REN-O019,saltar_estado,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+REN-S020,REN-O020,aprobar,SOLICITADA,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion

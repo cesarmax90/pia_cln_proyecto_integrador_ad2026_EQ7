@@ -1,0 +1,31 @@
+[project]
+name = "novarent-cln"
+version = "1.0.0"
+description = "NovaRent · Componentes de Lógica de Negocio (PIA FIME-UANL)"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+markers = ["postgres: requiere TEST_DATABASE_URL apuntando a PostgreSQL"]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[tool.ruff]
+line-length = 130
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501", "B008", "UP042"]  # B008: Depends() es el patrón de FastAPI; UP042: (str, Enum) explícito
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E701", "E702"]

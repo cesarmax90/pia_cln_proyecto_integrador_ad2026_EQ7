@@ -1,0 +1,2889 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NovaRent · Componentes de Lógica de Negocio",
+    "description": "\nAPI REST de **NovaRent** (renta de automóviles por día): reservación, entrega con checklist, contrato,\ndevolución, cargos automáticos, disputas, depósito de garantía, limpieza y reportes.\n\n**Autenticación simulada:** envía `X-Actor-Id` y `X-Rol` (CLIENTE, AGENTE, PATIO, LIMPIEZA, ADMINISTRACION, SISTEMA)\no usa el botón *Authorize*. La **autorización por rol sí se aplica** en cada caso de uso.\n\nDatos demo: agente `AGE-01`, patio `PAT-01`, limpieza `LIM-01`, administración `ADM-01`, clientes `REN-C001`…`REN-C040`.\n",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/categorias": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Lista las categorías de vehículo",
+        "operationId": "listar_categorias_api_v1_categorias_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ]
+      }
+    },
+    "/api/v1/sucursales": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Lista las sucursales",
+        "operationId": "listar_sucursales_api_v1_sucursales_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ]
+      }
+    },
+    "/api/v1/clientes/{cliente_id}": {
+      "get": {
+        "tags": [
+          "Catálogo"
+        ],
+        "summary": "Consulta un cliente (un cliente solo ve el suyo)",
+        "operationId": "obtener_cliente_api_v1_clientes__cliente_id__get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cliente Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/disponibilidad": {
+      "get": {
+        "tags": [
+          "Reservaciones"
+        ],
+        "summary": "US01 · Disponibilidad por sucursal, fechas y categoría",
+        "operationId": "buscar_disponibilidad_api_v1_disponibilidad_get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sucursal_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sucursal Id"
+            }
+          },
+          {
+            "name": "inicio",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Inicio"
+            }
+          },
+          {
+            "name": "fin",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "title": "Fin"
+            }
+          },
+          {
+            "name": "categoria_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Categoria Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DisponibilidadDTO"
+                  },
+                  "title": "Response Buscar Disponibilidad Api V1 Disponibilidad Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reservaciones": {
+      "post": {
+        "tags": [
+          "Reservaciones"
+        ],
+        "summary": "US02 · Genera una reservación (garantiza categoría, no unidad)",
+        "operationId": "crear_reservacion_api_v1_reservaciones_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservacionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ]
+      }
+    },
+    "/api/v1/reservaciones/{folio}": {
+      "get": {
+        "tags": [
+          "Reservaciones"
+        ],
+        "summary": "Consulta una reservación",
+        "operationId": "obtener_reservacion_api_v1_reservaciones__folio__get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "folio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folio"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reservaciones/{folio}/cancelar": {
+      "post": {
+        "tags": [
+          "Reservaciones"
+        ],
+        "summary": "US03 · Cancela una reservación (gratis con ≥24 h; si no, penalización)",
+        "operationId": "cancelar_reservacion_api_v1_reservaciones__folio__cancelar_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "folio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folio"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reservaciones/liberar-no-shows": {
+      "post": {
+        "tags": [
+          "Reservaciones"
+        ],
+        "summary": "US04 · Libera reservaciones no-show (job)",
+        "operationId": "liberar_no_shows_api_v1_reservaciones_liberar_no_shows_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ]
+      }
+    },
+    "/api/v1/reservaciones/{folio}/upgrade/respuesta": {
+      "post": {
+        "tags": [
+          "Reservaciones"
+        ],
+        "summary": "US09 · El cliente acepta o rechaza el upgrade (lista de espera o reembolso)",
+        "operationId": "responder_upgrade_api_v1_reservaciones__folio__upgrade_respuesta_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "folio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folio"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpgradeRespuestaIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reservaciones/{folio}/upgrade/cortesia": {
+      "post": {
+        "tags": [
+          "Reservaciones"
+        ],
+        "summary": "US10 · Administración otorga un upgrade de cortesía",
+        "operationId": "upgrade_cortesia_api_v1_reservaciones__folio__upgrade_cortesia_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "folio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folio"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reservaciones/{folio}/entrega": {
+      "post": {
+        "tags": [
+          "Entrega"
+        ],
+        "summary": "US05/US08 · Valida documentos, asigna unidad u ofrece upgrade sin costo",
+        "operationId": "iniciar_entrega_api_v1_reservaciones__folio__entrega_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "folio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folio"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntregaIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntregaDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inspecciones/entrega": {
+      "post": {
+        "tags": [
+          "Entrega"
+        ],
+        "summary": "US06 · Registra el checklist de entrega con fotos",
+        "operationId": "registrar_inspeccion_entrega_api_v1_inspecciones_entrega_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspeccionEntregaIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspeccionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ]
+      }
+    },
+    "/api/v1/inspecciones/{inspeccion_id}/firma": {
+      "post": {
+        "tags": [
+          "Entrega"
+        ],
+        "summary": "US07 · Firma digital del cliente (el checklist queda inmutable)",
+        "operationId": "firmar_inspeccion_api_v1_inspecciones__inspeccion_id__firma_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "inspeccion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Inspeccion Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirmaIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspeccionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos": {
+      "post": {
+        "tags": [
+          "Contratos"
+        ],
+        "summary": "Abre el contrato (checklist firmado + depósito retenido)",
+        "operationId": "abrir_contrato_api_v1_contratos_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContratoIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContratoDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ]
+      }
+    },
+    "/api/v1/contratos/{contrato_id}": {
+      "get": {
+        "tags": [
+          "Contratos"
+        ],
+        "summary": "Consulta un contrato",
+        "operationId": "obtener_contrato_api_v1_contratos__contrato_id__get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContratoDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/extensiones": {
+      "post": {
+        "tags": [
+          "Contratos"
+        ],
+        "summary": "US11/US12 · Solicita extensión (≤48 h agente; >48 h Administración)",
+        "operationId": "extender_renta_api_v1_contratos__contrato_id__extensiones_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtensionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtensionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/extensiones/{extension_id}/aprobacion": {
+      "post": {
+        "tags": [
+          "Contratos"
+        ],
+        "summary": "US12 · Administración aprueba una extensión mayor a 48 h",
+        "operationId": "aprobar_extension_api_v1_contratos__contrato_id__extensiones__extension_id__aprobacion_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          },
+          {
+            "name": "extension_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Extension Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtensionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/conductores": {
+      "post": {
+        "tags": [
+          "Contratos"
+        ],
+        "summary": "Agrega un conductor adicional con licencia vigente",
+        "operationId": "agregar_conductor_api_v1_contratos__contrato_id__conductores_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConductorIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContratoDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/inspeccion-devolucion": {
+      "post": {
+        "tags": [
+          "Devolución y cargos"
+        ],
+        "summary": "US13 · Registra el checklist de devolución",
+        "operationId": "registrar_inspeccion_devolucion_api_v1_contratos__contrato_id__inspeccion_devolucion_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspeccionDevolucionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspeccionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/devolucion": {
+      "post": {
+        "tags": [
+          "Devolución y cargos"
+        ],
+        "summary": "US14-US16 · Procesa la devolución y dispara el cálculo de cargos",
+        "operationId": "procesar_devolucion_api_v1_contratos__contrato_id__devolucion_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContratoDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/liquidacion": {
+      "get": {
+        "tags": [
+          "Devolución y cargos"
+        ],
+        "summary": "Consulta la liquidación (cargos y depósito)",
+        "operationId": "obtener_liquidacion_api_v1_contratos__contrato_id__liquidacion_get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiquidacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/liquidacion/cargos/{cargo_id}/aprobacion-danio": {
+      "post": {
+        "tags": [
+          "Devolución y cargos"
+        ],
+        "summary": "Administración fija el monto de un cargo por daño",
+        "operationId": "aprobar_cargo_danio_api_v1_contratos__contrato_id__liquidacion_cargos__cargo_id__aprobacion_danio_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          },
+          {
+            "name": "cargo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cargo Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MontoDanioIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiquidacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/liquidacion/cargos/{cargo_id}/disputa": {
+      "post": {
+        "tags": [
+          "Devolución y cargos"
+        ],
+        "summary": "US17 · El cliente disputa un cargo",
+        "operationId": "disputar_cargo_api_v1_contratos__contrato_id__liquidacion_cargos__cargo_id__disputa_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          },
+          {
+            "name": "cargo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cargo Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisputaIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiquidacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/liquidacion/cargos/{cargo_id}/evidencia": {
+      "get": {
+        "tags": [
+          "Devolución y cargos"
+        ],
+        "summary": "US17 · Compara la evidencia de entrega y devolución",
+        "operationId": "evidencia_disputa_api_v1_contratos__contrato_id__liquidacion_cargos__cargo_id__evidencia_get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          },
+          {
+            "name": "cargo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cargo Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenciaDisputaDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contratos/{contrato_id}/liquidacion/cargos/{cargo_id}/resolucion": {
+      "post": {
+        "tags": [
+          "Devolución y cargos"
+        ],
+        "summary": "US17 · Administración resuelve la disputa",
+        "operationId": "resolver_disputa_api_v1_contratos__contrato_id__liquidacion_cargos__cargo_id__resolucion_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "contrato_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Contrato Id"
+            }
+          },
+          {
+            "name": "cargo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Cargo Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolucionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiquidacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/liquidaciones/liberar-depositos": {
+      "post": {
+        "tags": [
+          "Devolución y cargos"
+        ],
+        "summary": "US20 · Libera depósitos a 5 días hábiles sin incidencias (job diario)",
+        "operationId": "liberar_depositos_api_v1_liquidaciones_liberar_depositos_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ]
+      }
+    },
+    "/api/v1/sucursales/{sucursal_id}/flota": {
+      "get": {
+        "tags": [
+          "Flota y limpieza"
+        ],
+        "summary": "Resumen de flota por estado y categoría",
+        "operationId": "resumen_flota_api_v1_sucursales__sucursal_id__flota_get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sucursal_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sucursal Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumenFlotaDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/vehiculos/{vehiculo_id}": {
+      "get": {
+        "tags": [
+          "Flota y limpieza"
+        ],
+        "summary": "Consulta un vehículo",
+        "operationId": "obtener_vehiculo_api_v1_vehiculos__vehiculo_id__get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "vehiculo_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Vehiculo Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehiculoDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/limpieza/tareas": {
+      "get": {
+        "tags": [
+          "Flota y limpieza"
+        ],
+        "summary": "Tareas de limpieza abiertas",
+        "operationId": "tareas_abiertas_api_v1_limpieza_tareas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TareaLimpiezaDTO"
+                  },
+                  "type": "array",
+                  "title": "Response Tareas Abiertas Api V1 Limpieza Tareas Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ]
+      }
+    },
+    "/api/v1/limpieza/tareas/{tarea_id}/completar": {
+      "post": {
+        "tags": [
+          "Flota y limpieza"
+        ],
+        "summary": "US18 · Marca el vehículo como listo (vuelve a Disponible)",
+        "operationId": "completar_tarea_api_v1_limpieza_tareas__tarea_id__completar_post",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tarea_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tarea Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TareaLimpiezaDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reportes/ocupacion": {
+      "get": {
+        "tags": [
+          "Reportes"
+        ],
+        "summary": "US19 · Ocupación, ingresos y rotación de flota",
+        "operationId": "reporte_ocupacion_api_v1_reportes_ocupacion_get",
+        "security": [
+          {
+            "ActorId": []
+          },
+          {
+            "Rol": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "sucursal_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Sucursal Id"
+            }
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "examples": [
+                "2026-11-01T00:00:00Z"
+              ],
+              "title": "Desde"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "examples": [
+                "2026-12-01T00:00:00Z"
+              ],
+              "title": "Hasta"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReporteOcupacionDTO"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/salud": {
+      "get": {
+        "tags": [
+          "Operación"
+        ],
+        "summary": "Verifica que el servicio y la base respondan",
+        "operationId": "salud_salud_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CancelacionDTO": {
+        "properties": {
+          "folio": {
+            "type": "string",
+            "title": "Folio"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "penalizada": {
+            "type": "boolean",
+            "title": "Penalizada"
+          },
+          "penalizacion": {
+            "type": "string",
+            "title": "Penalizacion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "folio",
+          "estado",
+          "penalizada",
+          "penalizacion"
+        ],
+        "title": "CancelacionDTO"
+      },
+      "CargoDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          },
+          "monto": {
+            "type": "string",
+            "title": "Monto"
+          },
+          "descripcion": {
+            "type": "string",
+            "title": "Descripcion"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "disputa_motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disputa Motivo"
+          },
+          "disputa_resolucion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disputa Resolucion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "tipo",
+          "monto",
+          "descripcion",
+          "estado",
+          "disputa_motivo",
+          "disputa_resolucion"
+        ],
+        "title": "CargoDTO"
+      },
+      "ConductorIn": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "licencia_numero": {
+            "type": "string",
+            "title": "Licencia Numero"
+          },
+          "licencia_vigencia": {
+            "type": "string",
+            "format": "date",
+            "title": "Licencia Vigencia"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "nombre",
+          "licencia_numero",
+          "licencia_vigencia"
+        ],
+        "title": "ConductorIn"
+      },
+      "ContratoDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "reservacion_folio": {
+            "type": "string",
+            "title": "Reservacion Folio"
+          },
+          "cliente_id": {
+            "type": "string",
+            "title": "Cliente Id"
+          },
+          "vehiculo_id": {
+            "type": "string",
+            "title": "Vehiculo Id"
+          },
+          "categoria_id": {
+            "type": "string",
+            "title": "Categoria Id"
+          },
+          "sucursal_id": {
+            "type": "string",
+            "title": "Sucursal Id"
+          },
+          "inicio": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Inicio"
+          },
+          "fin": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fin"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "tarifa_diaria": {
+            "type": "string",
+            "title": "Tarifa Diaria"
+          },
+          "monto_base": {
+            "type": "string",
+            "title": "Monto Base"
+          },
+          "extensiones": {
+            "items": {
+              "$ref": "#/components/schemas/ExtensionDTO"
+            },
+            "type": "array",
+            "title": "Extensiones"
+          },
+          "conductores_adicionales": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Conductores Adicionales"
+          },
+          "devolucion_real": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Devolucion Real"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "reservacion_folio",
+          "cliente_id",
+          "vehiculo_id",
+          "categoria_id",
+          "sucursal_id",
+          "inicio",
+          "fin",
+          "estado",
+          "tarifa_diaria",
+          "monto_base",
+          "extensiones",
+          "conductores_adicionales",
+          "devolucion_real"
+        ],
+        "title": "ContratoDTO"
+      },
+      "ContratoIn": {
+        "properties": {
+          "folio": {
+            "type": "string",
+            "title": "Folio"
+          },
+          "vehiculo_id": {
+            "type": "string",
+            "title": "Vehiculo Id"
+          },
+          "inspeccion_id": {
+            "type": "string",
+            "title": "Inspeccion Id"
+          },
+          "cobertura_tipo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cobertura Tipo"
+          },
+          "cobertura_costo_diario": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cobertura Costo Diario"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "folio",
+          "vehiculo_id",
+          "inspeccion_id"
+        ],
+        "title": "ContratoIn"
+      },
+      "DanioDTO": {
+        "properties": {
+          "zona": {
+            "type": "string",
+            "title": "Zona"
+          },
+          "descripcion": {
+            "type": "string",
+            "title": "Descripcion"
+          },
+          "fotos": {
+            "items": {
+              "$ref": "#/components/schemas/FotoDTO"
+            },
+            "type": "array",
+            "title": "Fotos"
+          }
+        },
+        "type": "object",
+        "required": [
+          "zona",
+          "descripcion",
+          "fotos"
+        ],
+        "title": "DanioDTO"
+      },
+      "DanioIn": {
+        "properties": {
+          "zona": {
+            "type": "string",
+            "title": "Zona",
+            "examples": [
+              "puerta delantera"
+            ]
+          },
+          "descripcion": {
+            "type": "string",
+            "title": "Descripcion",
+            "examples": [
+              "rayón profundo"
+            ]
+          },
+          "fotos": {
+            "items": {
+              "$ref": "#/components/schemas/FotoIn"
+            },
+            "type": "array",
+            "title": "Fotos"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "zona",
+          "descripcion"
+        ],
+        "title": "DanioIn"
+      },
+      "DisponibilidadDTO": {
+        "properties": {
+          "categoria_id": {
+            "type": "string",
+            "title": "Categoria Id"
+          },
+          "categoria": {
+            "type": "string",
+            "title": "Categoria"
+          },
+          "tarifa_diaria": {
+            "type": "string",
+            "title": "Tarifa Diaria"
+          },
+          "disponibles": {
+            "type": "integer",
+            "title": "Disponibles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "categoria_id",
+          "categoria",
+          "tarifa_diaria",
+          "disponibles"
+        ],
+        "title": "DisponibilidadDTO"
+      },
+      "DisputaIn": {
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "title": "Motivo",
+            "examples": [
+              "El daño ya existía al recibir la unidad"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "motivo"
+        ],
+        "title": "DisputaIn"
+      },
+      "EntregaDTO": {
+        "properties": {
+          "folio": {
+            "type": "string",
+            "title": "Folio"
+          },
+          "vehiculo_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vehiculo Id"
+          },
+          "requiere_upgrade": {
+            "type": "boolean",
+            "title": "Requiere Upgrade"
+          },
+          "categoria_superior_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categoria Superior Id"
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          }
+        },
+        "type": "object",
+        "required": [
+          "folio",
+          "vehiculo_id",
+          "requiere_upgrade",
+          "categoria_superior_id",
+          "mensaje"
+        ],
+        "title": "EntregaDTO"
+      },
+      "EntregaIn": {
+        "properties": {
+          "licencia_numero": {
+            "type": "string",
+            "title": "Licencia Numero",
+            "examples": [
+              "LIC-REN-C001"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "licencia_numero"
+        ],
+        "title": "EntregaIn"
+      },
+      "EvidenciaDisputaDTO": {
+        "properties": {
+          "contrato_id": {
+            "type": "string",
+            "title": "Contrato Id"
+          },
+          "cargo_id": {
+            "type": "string",
+            "title": "Cargo Id"
+          },
+          "entrega": {
+            "$ref": "#/components/schemas/InspeccionDTO"
+          },
+          "devolucion": {
+            "$ref": "#/components/schemas/InspeccionDTO"
+          },
+          "danios_nuevos": {
+            "items": {
+              "$ref": "#/components/schemas/DanioDTO"
+            },
+            "type": "array",
+            "title": "Danios Nuevos"
+          }
+        },
+        "type": "object",
+        "required": [
+          "contrato_id",
+          "cargo_id",
+          "entrega",
+          "devolucion"
+        ],
+        "title": "EvidenciaDisputaDTO"
+      },
+      "ExtensionDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "horas": {
+            "type": "integer",
+            "title": "Horas"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "aprobada_por": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aprobada Por"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "horas",
+          "estado",
+          "aprobada_por"
+        ],
+        "title": "ExtensionDTO"
+      },
+      "ExtensionIn": {
+        "properties": {
+          "horas": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Horas",
+            "examples": [
+              24
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "horas"
+        ],
+        "title": "ExtensionIn"
+      },
+      "FirmaIn": {
+        "properties": {
+          "firmante": {
+            "type": "string",
+            "title": "Firmante",
+            "examples": [
+              "Arrendatario 01"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "firmante"
+        ],
+        "title": "FirmaIn"
+      },
+      "FotoDTO": {
+        "properties": {
+          "uri": {
+            "type": "string",
+            "title": "Uri"
+          },
+          "tomada_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Tomada En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uri",
+          "tomada_en"
+        ],
+        "title": "FotoDTO"
+      },
+      "FotoIn": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "title": "Nombre",
+            "examples": [
+              "frente.jpg"
+            ]
+          },
+          "contenido_base64": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contenido Base64",
+            "description": "Contenido en base64 (opcional en demos)"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "nombre"
+        ],
+        "title": "FotoIn"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InspeccionDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "contrato_id": {
+            "type": "string",
+            "title": "Contrato Id"
+          },
+          "vehiculo_id": {
+            "type": "string",
+            "title": "Vehiculo Id"
+          },
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          },
+          "empleado_id": {
+            "type": "string",
+            "title": "Empleado Id"
+          },
+          "combustible_octavos": {
+            "type": "integer",
+            "title": "Combustible Octavos"
+          },
+          "kilometraje": {
+            "type": "integer",
+            "title": "Kilometraje"
+          },
+          "fotos": {
+            "items": {
+              "$ref": "#/components/schemas/FotoDTO"
+            },
+            "type": "array",
+            "title": "Fotos"
+          },
+          "danios": {
+            "items": {
+              "$ref": "#/components/schemas/DanioDTO"
+            },
+            "type": "array",
+            "title": "Danios"
+          },
+          "firmada": {
+            "type": "boolean",
+            "title": "Firmada"
+          },
+          "firmante": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firmante"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "contrato_id",
+          "vehiculo_id",
+          "tipo",
+          "empleado_id",
+          "combustible_octavos",
+          "kilometraje",
+          "fotos",
+          "danios",
+          "firmada",
+          "firmante"
+        ],
+        "title": "InspeccionDTO"
+      },
+      "InspeccionDevolucionIn": {
+        "properties": {
+          "combustible_octavos": {
+            "type": "integer",
+            "maximum": 8.0,
+            "minimum": 0.0,
+            "title": "Combustible Octavos"
+          },
+          "kilometraje": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Kilometraje"
+          },
+          "fotos": {
+            "items": {
+              "$ref": "#/components/schemas/FotoIn"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Fotos"
+          },
+          "danios": {
+            "items": {
+              "$ref": "#/components/schemas/DanioIn"
+            },
+            "type": "array",
+            "title": "Danios"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "combustible_octavos",
+          "kilometraje",
+          "fotos"
+        ],
+        "title": "InspeccionDevolucionIn"
+      },
+      "InspeccionEntregaIn": {
+        "properties": {
+          "folio": {
+            "type": "string",
+            "title": "Folio",
+            "description": "Folio de la reservación que se entrega",
+            "examples": [
+              "RES-1A2B3C4D"
+            ]
+          },
+          "vehiculo_id": {
+            "type": "string",
+            "title": "Vehiculo Id"
+          },
+          "combustible_octavos": {
+            "type": "integer",
+            "maximum": 8.0,
+            "minimum": 0.0,
+            "title": "Combustible Octavos"
+          },
+          "kilometraje": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Kilometraje"
+          },
+          "fotos": {
+            "items": {
+              "$ref": "#/components/schemas/FotoIn"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Fotos"
+          },
+          "danios": {
+            "items": {
+              "$ref": "#/components/schemas/DanioIn"
+            },
+            "type": "array",
+            "title": "Danios"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "folio",
+          "vehiculo_id",
+          "combustible_octavos",
+          "kilometraje",
+          "fotos"
+        ],
+        "title": "InspeccionEntregaIn"
+      },
+      "LiquidacionDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "contrato_id": {
+            "type": "string",
+            "title": "Contrato Id"
+          },
+          "cargos": {
+            "items": {
+              "$ref": "#/components/schemas/CargoDTO"
+            },
+            "type": "array",
+            "title": "Cargos"
+          },
+          "total_cargos": {
+            "type": "string",
+            "title": "Total Cargos"
+          },
+          "deposito_monto": {
+            "type": "string",
+            "title": "Deposito Monto"
+          },
+          "deposito_estado": {
+            "type": "string",
+            "title": "Deposito Estado"
+          },
+          "cargos_calculados": {
+            "type": "boolean",
+            "title": "Cargos Calculados"
+          },
+          "tiene_incidencias": {
+            "type": "boolean",
+            "title": "Tiene Incidencias"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "contrato_id",
+          "cargos",
+          "total_cargos",
+          "deposito_monto",
+          "deposito_estado",
+          "cargos_calculados",
+          "tiene_incidencias"
+        ],
+        "title": "LiquidacionDTO"
+      },
+      "MontoDanioIn": {
+        "properties": {
+          "monto": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Monto",
+            "examples": [
+              "800.00"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "monto"
+        ],
+        "title": "MontoDanioIn"
+      },
+      "ReporteOcupacionDTO": {
+        "properties": {
+          "sucursal_id": {
+            "type": "string",
+            "title": "Sucursal Id"
+          },
+          "desde": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Desde"
+          },
+          "hasta": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Hasta"
+          },
+          "flota_total": {
+            "type": "integer",
+            "title": "Flota Total"
+          },
+          "ocupacion_pct": {
+            "type": "string",
+            "title": "Ocupacion Pct"
+          },
+          "ingresos_renta": {
+            "type": "string",
+            "title": "Ingresos Renta"
+          },
+          "ingresos_cargos": {
+            "type": "string",
+            "title": "Ingresos Cargos"
+          },
+          "rotacion_horas_promedio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rotacion Horas Promedio"
+          },
+          "vehiculos_por_estado": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Vehiculos Por Estado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sucursal_id",
+          "desde",
+          "hasta",
+          "flota_total",
+          "ocupacion_pct",
+          "ingresos_renta",
+          "ingresos_cargos",
+          "rotacion_horas_promedio",
+          "vehiculos_por_estado"
+        ],
+        "title": "ReporteOcupacionDTO"
+      },
+      "ReservacionDTO": {
+        "properties": {
+          "folio": {
+            "type": "string",
+            "title": "Folio"
+          },
+          "cliente_id": {
+            "type": "string",
+            "title": "Cliente Id"
+          },
+          "categoria_id": {
+            "type": "string",
+            "title": "Categoria Id"
+          },
+          "categoria_asignada_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categoria Asignada Id"
+          },
+          "sucursal_id": {
+            "type": "string",
+            "title": "Sucursal Id"
+          },
+          "inicio": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Inicio"
+          },
+          "fin": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fin"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "tarifa_diaria": {
+            "type": "string",
+            "title": "Tarifa Diaria"
+          },
+          "penalizacion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Penalizacion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "folio",
+          "cliente_id",
+          "categoria_id",
+          "categoria_asignada_id",
+          "sucursal_id",
+          "inicio",
+          "fin",
+          "estado",
+          "tarifa_diaria",
+          "penalizacion"
+        ],
+        "title": "ReservacionDTO"
+      },
+      "ReservacionIn": {
+        "properties": {
+          "cliente_id": {
+            "type": "string",
+            "title": "Cliente Id",
+            "examples": [
+              "REN-C001"
+            ]
+          },
+          "categoria_id": {
+            "type": "string",
+            "title": "Categoria Id",
+            "examples": [
+              "REN-P001"
+            ]
+          },
+          "sucursal_id": {
+            "type": "string",
+            "title": "Sucursal Id",
+            "examples": [
+              "SUC-APODACA"
+            ]
+          },
+          "inicio": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Inicio",
+            "examples": [
+              "2026-11-06T09:00:00Z"
+            ]
+          },
+          "fin": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fin",
+            "examples": [
+              "2026-11-08T09:00:00Z"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cliente_id",
+          "categoria_id",
+          "sucursal_id",
+          "inicio",
+          "fin"
+        ],
+        "title": "ReservacionIn"
+      },
+      "ResolucionIn": {
+        "properties": {
+          "resolucion": {
+            "type": "string",
+            "enum": [
+              "CONFIRMADO",
+              "ANULADO"
+            ],
+            "title": "Resolucion"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "resolucion"
+        ],
+        "title": "ResolucionIn"
+      },
+      "ResumenFlotaDTO": {
+        "properties": {
+          "sucursal_id": {
+            "type": "string",
+            "title": "Sucursal Id"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "por_estado": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Por Estado"
+          },
+          "por_categoria": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Por Categoria"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sucursal_id",
+          "total",
+          "por_estado",
+          "por_categoria"
+        ],
+        "title": "ResumenFlotaDTO"
+      },
+      "TareaLimpiezaDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "vehiculo_id": {
+            "type": "string",
+            "title": "Vehiculo Id"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "creada_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creada En"
+          },
+          "completada_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completada En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "vehiculo_id",
+          "estado",
+          "creada_en",
+          "completada_en"
+        ],
+        "title": "TareaLimpiezaDTO"
+      },
+      "UpgradeRespuestaIn": {
+        "properties": {
+          "respuesta": {
+            "type": "string",
+            "enum": [
+              "ACEPTAR",
+              "RECHAZAR_LISTA_ESPERA",
+              "RECHAZAR_REEMBOLSO"
+            ],
+            "title": "Respuesta"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "respuesta"
+        ],
+        "title": "UpgradeRespuestaIn"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VehiculoDTO": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "placa": {
+            "type": "string",
+            "title": "Placa"
+          },
+          "categoria_id": {
+            "type": "string",
+            "title": "Categoria Id"
+          },
+          "sucursal_id": {
+            "type": "string",
+            "title": "Sucursal Id"
+          },
+          "kilometraje": {
+            "type": "integer",
+            "title": "Kilometraje"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "placa",
+          "categoria_id",
+          "sucursal_id",
+          "kilometraje",
+          "estado"
+        ],
+        "title": "VehiculoDTO"
+      }
+    },
+    "securitySchemes": {
+      "ActorId": {
+        "type": "apiKey",
+        "description": "Identificador del actor (simulado)",
+        "in": "header",
+        "name": "X-Actor-Id"
+      },
+      "Rol": {
+        "type": "apiKey",
+        "description": "Rol: CLIENTE, AGENTE, PATIO, LIMPIEZA, ADMINISTRACION o SISTEMA",
+        "in": "header",
+        "name": "X-Rol"
+      }
+    }
+  }
+}

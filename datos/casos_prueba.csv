@@ -1,0 +1,121 @@
+﻿caso_id,operacion_id,tipo_prueba,regla_a_verificar,resultado_alumno,instrucciones
+REN-T001,REN-O001,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B001,REN-O001,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T002,REN-O002,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B002,REN-O002,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T003,REN-O003,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B003,REN-O003,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T004,REN-O004,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B004,REN-O004,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T005,REN-O005,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B005,REN-O005,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T006,REN-O006,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B006,REN-O006,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T007,REN-O007,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B007,REN-O007,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T008,REN-O008,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B008,REN-O008,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T009,REN-O009,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B009,REN-O009,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T010,REN-O010,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B010,REN-O010,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T011,REN-O011,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B011,REN-O011,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T012,REN-O012,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B012,REN-O012,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T013,REN-O013,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B013,REN-O013,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T014,REN-O014,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B014,REN-O014,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T015,REN-O015,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B015,REN-O015,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T016,REN-O016,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B016,REN-O016,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T017,REN-O017,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B017,REN-O017,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T018,REN-O018,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B018,REN-O018,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T019,REN-O019,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B019,REN-O019,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T020,REN-O020,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B020,REN-O020,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T021,REN-O021,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B021,REN-O021,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T022,REN-O022,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B022,REN-O022,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T023,REN-O023,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B023,REN-O023,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T024,REN-O024,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B024,REN-O024,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T025,REN-O025,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B025,REN-O025,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T026,REN-O026,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B026,REN-O026,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T027,REN-O027,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B027,REN-O027,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T028,REN-O028,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B028,REN-O028,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T029,REN-O029,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B029,REN-O029,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T030,REN-O030,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B030,REN-O030,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T031,REN-O031,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B031,REN-O031,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T032,REN-O032,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B032,REN-O032,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T033,REN-O033,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B033,REN-O033,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T034,REN-O034,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B034,REN-O034,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T035,REN-O035,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B035,REN-O035,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T036,REN-O036,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B036,REN-O036,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T037,REN-O037,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B037,REN-O037,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T038,REN-O038,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B038,REN-O038,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T039,REN-O039,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B039,REN-O039,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T040,REN-O040,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B040,REN-O040,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T041,REN-O041,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B041,REN-O041,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T042,REN-O042,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B042,REN-O042,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T043,REN-O043,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B043,REN-O043,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T044,REN-O044,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B044,REN-O044,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T045,REN-O045,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B045,REN-O045,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T046,REN-O046,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B046,REN-O046,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T047,REN-O047,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B047,REN-O047,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T048,REN-O048,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B048,REN-O048,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T049,REN-O049,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B049,REN-O049,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T050,REN-O050,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B050,REN-O050,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T051,REN-O051,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B051,REN-O051,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T052,REN-O052,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B052,REN-O052,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T053,REN-O053,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B053,REN-O053,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T054,REN-O054,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B054,REN-O054,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T055,REN-O055,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B055,REN-O055,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T056,REN-O056,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B056,REN-O056,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T057,REN-O057,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B057,REN-O057,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T058,REN-O058,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B058,REN-O058,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T059,REN-O059,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B059,REN-O059,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+REN-T060,REN-O060,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+REN-B060,REN-O060,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT

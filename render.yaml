@@ -1,0 +1,20 @@
+# Despliegue en Render (Blueprint): New + > Blueprint > selecciona este repositorio.
+services:
+  - type: web
+    name: novarent-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerTarget: produccion
+    healthCheckPath: /salud
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: novarent-db
+          property: connectionString
+      - key: ENTORNO
+        value: produccion
+      - key: CARGAR_DATOS_DEMO
+        value: "true"
+databases:
+  - name: novarent-db
+    plan: free

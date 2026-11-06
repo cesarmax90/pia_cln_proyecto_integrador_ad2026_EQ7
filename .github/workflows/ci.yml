@@ -1,0 +1,70 @@
+name: CI NovaRent
+on:
+  push:
+  pull_request:
+
+jobs:
+  calidad:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check src tests scripts
+
+  pruebas:
+    name: Pruebas (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    needs: calidad
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: novarent
+          POSTGRES_PASSWORD: novarent
+          POSTGRES_DB: novarent_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U novarent" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      # Toda la suite corre contra PostgreSQL real (en local usa SQLite en memoria)
+      TEST_DATABASE_URL: postgresql+psycopg://novarent:novarent@localhost:5432/novarent_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Pruebas con cobertura mínima de 80 %
+        run: pytest --cov=src --cov-report=term-missing --cov-report=xml --cov-report=html --cov-fail-under=80
+      - uses: actions/upload-artifact@v4
+        if: always() && matrix.python == '3.12'
+        with:
+          name: cobertura
+          path: |
+            coverage.xml
+            htmlcov
+
+  docker:
+    name: Docker Compose (DB + App + Tests)
+    runs-on: ubuntu-latest
+    needs: pruebas
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pruebas dentro de contenedores
+        run: docker compose --profile tests up --build --exit-code-from tests --abort-on-container-exit tests
+      - name: Arranca la API y verifica /salud
+        run: |
+          docker compose up --build -d app
+          for i in $(seq 1 30); do curl -fsS http://localhost:8000/salud && exit 0; sleep 2; done
+          docker compose logs app && exit 1
+      - run: docker compose down -v
