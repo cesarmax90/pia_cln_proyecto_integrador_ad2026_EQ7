@@ -9,4 +9,4 @@ htmlcov
 .coverage
 .env
 *.db
-docs
+
