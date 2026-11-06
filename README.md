@@ -7,8 +7,8 @@ Sistema de lógica de negocio para **NovaRent**, empresa de renta de automóvile
 | Curso | Componentes de Lógica de Negocio · FIME-UANL |
 | Caso | Caso 07 · NovaRent |
 | Integrantes | Arturo Sebastian Pérez Zapata (2142942) · Cesar Maximiliano Peña Mendoza (2144135) · Diego Alberto Sierra Mendoza (2143733) |
-| Repositorio | `https://github.com/<usuario>/<repositorio>` *(completar)* |
-| Aplicación desplegada | `https://<tu-servicio>.onrender.com/docs` *(completar tras el despliegue)* |
+| Repositorio | `https://github.com/cesarmax90/pia_cln_proyecto_integrador_ad2026_EQ7` *(completar)* |
+| Aplicación desplegada | `https://novarent-api-u3e9.onrender.com/docs` *(completar tras el despliegue)* |
 | Entrega | 06/11/2026 |
 
 ## Qué contiene
