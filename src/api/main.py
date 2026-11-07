@@ -39,14 +39,53 @@ ESTADO_HTTP: list[tuple[type[ErrorDominio], int]] = [
     (ErrorDominio, 400),
 ]
 
+# Definición ordenada de categorías para la interfaz interactiva
+TAGS_METADATA = [
+    {
+        "name": "Operación",
+        "description": "Monitoreo del estado del servicio, entorno de ejecución y conectividad con la base de datos.",
+    },
+    {
+        "name": "1. Catálogo de Vehículos",
+        "description": "Consulta de flotilla disponible, especificaciones técnicas y tarifas diarias en MXN.",
+    },
+    {
+        "name": "2. Reservaciones",
+        "description": "Gestión de solicitudes de renta: cotización inicial, confirmación de fechas y máquina de estados.",
+    },
+    {
+        "name": "3. Entrega de Vehículo",
+        "description": "Inspección física inicial (odómetro, combustible, daños) y firma de entrega al cliente.",
+    },
+    {
+        "name": "4. Devolución y Liquidación",
+        "description": "Recepción de la unidad, cálculo de cargos automáticos por tiempo/combustible y cierre de contrato.",
+    },
+]
+
 DESCRIPCION = """
-API REST de **NovaRent** (renta de automóviles por día): reservación, entrega con checklist, contrato,
-devolución, cargos automáticos, disputas, depósito de garantía, limpieza y reportes.
+## Sistema Integral de Renta de Vehículos · NovaRent
 
-**Autenticación simulada:** envía `X-Actor-Id` y `X-Rol` (CLIENTE, AGENTE, PATIO, LIMPIEZA, ADMINISTRACION, SISTEMA)
-o usa el botón *Authorize*. La **autorización por rol sí se aplica** en cada caso de uso.
+Esta API implementa la lógica de negocio completa para el arrendamiento de unidades, aplicando arquitectura orientada al dominio (**DDD**), máquina de estados formal y especificaciones de validación.
 
-Datos demo: agente `AGE-01`, patio `PAT-01`, limpieza `LIM-01`, administración `ADM-01`, clientes `REN-C001`…`REN-C040`.
+---
+
+### Guía rápida para probar el sistema:
+
+1. **Monitoreo:** Ejecuta el endpoint `/salud` para verificar la conexión activa del sistema.
+2. **Catálogo:** Consulta los vehículos disponibles y sus tarifas vigentes.
+3. **Flujo operativo:** Realiza el ciclo completo de una unidad:
+   - **SOLICITADA:** Creación de la reservación para el cliente.
+   - **CONFIRMADA / APROBADA:** Validación de disponibilidad y precondiciones de pago.
+   - **ENTREGADA:** Registro de inspección física y salida de patio.
+   - **DEVUELTA / LIQUIDADA:** Inspección de retorno, liquidación financiera y liberación del activo.
+
+---
+
+### Autenticación y Perfiles:
+Para ejecutar pruebas que requieren permisos específicos, utiliza el botón **Authorize** (arriba a la derecha) o envía los encabezados HTTP:
+* `X-Actor-Id`: Identificador del usuario (ejemplo: `AGE-01`, `CLI-001`, `PAT-01`, `ADM-01`).
+* `X-Rol`: Rol asignado (`CLIENTE`, `AGENTE`, `PATIO`, `LIMPIEZA`, `ADMINISTRACION`, `SISTEMA`).
 """
 
 
@@ -67,12 +106,22 @@ def crear_app(settings: Settings | None = None, servicios: Servicios | None = No
         yield
 
     app = FastAPI(
-        title="NovaRent · Componentes de Lógica de Negocio", version=__version__, description=DESCRIPCION,
+        title="NovaRent · Lógica de Negocio",
+        version=__version__,
+        description=DESCRIPCION,
+        openapi_tags=TAGS_METADATA,
+        docs_url="/docs",
+        redoc_url="/redoc",
         lifespan=ciclo_de_vida,
     )
     app.include_router(router)
 
-    @app.get("/salud", tags=["Operación"], summary="Verifica que el servicio y la base respondan")
+    @app.get(
+        "/salud",
+        tags=["Operación"],
+        summary="Verificar estado operativo del sistema",
+        description="Comprueba que la API y la base de datos se encuentren en línea y reporta el número de sucursales registradas.",
+    )
     def salud(request: Request):
         with request.app.state.servicios.ctx.uow_factory() as uow:
             sucursales = len(uow.sucursales.listar())

@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "NovaRent · Componentes de Lógica de Negocio",
-    "description": "\nAPI REST de **NovaRent** (renta de automóviles por día): reservación, entrega con checklist, contrato,\ndevolución, cargos automáticos, disputas, depósito de garantía, limpieza y reportes.\n\n**Autenticación simulada:** envía `X-Actor-Id` y `X-Rol` (CLIENTE, AGENTE, PATIO, LIMPIEZA, ADMINISTRACION, SISTEMA)\no usa el botón *Authorize*. La **autorización por rol sí se aplica** en cada caso de uso.\n\nDatos demo: agente `AGE-01`, patio `PAT-01`, limpieza `LIM-01`, administración `ADM-01`, clientes `REN-C001`…`REN-C040`.\n",
+    "title": "NovaRent · Lógica de Negocio",
+    "description": "\n## Sistema Integral de Renta de Vehículos · NovaRent\n\nEsta API implementa la lógica de negocio completa para el arrendamiento de unidades, aplicando arquitectura orientada al dominio (**DDD**), máquina de estados formal y especificaciones de validación.\n\n---\n\n### Guía rápida para probar el sistema:\n\n1. **Monitoreo:** Ejecuta el endpoint `/salud` para verificar la conexión activa del sistema.\n2. **Catálogo:** Consulta los vehículos disponibles y sus tarifas vigentes.\n3. **Flujo operativo:** Realiza el ciclo completo de una unidad:\n   - **SOLICITADA:** Creación de la reservación para el cliente.\n   - **CONFIRMADA / APROBADA:** Validación de disponibilidad y precondiciones de pago.\n   - **ENTREGADA:** Registro de inspección física y salida de patio.\n   - **DEVUELTA / LIQUIDADA:** Inspección de retorno, liquidación financiera y liberación del activo.\n\n---\n\n### Autenticación y Perfiles:\nPara ejecutar pruebas que requieren permisos específicos, utiliza el botón **Authorize** (arriba a la derecha) o envía los encabezados HTTP:\n* `X-Actor-Id`: Identificador del usuario (ejemplo: `AGE-01`, `CLI-001`, `PAT-01`, `ADM-01`).\n* `X-Rol`: Rol asignado (`CLIENTE`, `AGENTE`, `PATIO`, `LIMPIEZA`, `ADMINISTRACION`, `SISTEMA`).\n",
     "version": "1.0.0"
   },
   "paths": {
@@ -1648,7 +1648,8 @@
         "tags": [
           "Operación"
         ],
-        "summary": "Verifica que el servicio y la base respondan",
+        "summary": "Verificar estado operativo del sistema",
+        "description": "Comprueba que la API y la base de datos se encuentren en línea y reporta el número de sucursales registradas.",
         "operationId": "salud_salud_get",
         "responses": {
           "200": {
@@ -2885,5 +2886,27 @@
         "name": "X-Rol"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Operación",
+      "description": "Monitoreo del estado del servicio, entorno de ejecución y conectividad con la base de datos."
+    },
+    {
+      "name": "1. Catálogo de Vehículos",
+      "description": "Consulta de flotilla disponible, especificaciones técnicas y tarifas diarias en MXN."
+    },
+    {
+      "name": "2. Reservaciones",
+      "description": "Gestión de solicitudes de renta: cotización inicial, confirmación de fechas y máquina de estados."
+    },
+    {
+      "name": "3. Entrega de Vehículo",
+      "description": "Inspección física inicial (odómetro, combustible, daños) y firma de entrega al cliente."
+    },
+    {
+      "name": "4. Devolución y Liquidación",
+      "description": "Recepción de la unidad, cálculo de cargos automáticos por tiempo/combustible y cierre de contrato."
+    }
+  ]
 }
