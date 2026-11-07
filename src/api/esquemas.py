@@ -175,15 +175,15 @@ class ContratoIn(Entrada):
         description="ID del checklist de entrega previamente firmado",
     )
     cobertura_tipo: str | None = Field(
-        default="AMPLIA",
+        default=None,
         examples=["AMPLIA"],
-        description="Tipo de seguro contratado (BASICA, AMPLIA, PREMIUM)",
+        description="Tipo de cobertura opcional",
     )
     cobertura_costo_diario: float | None = Field(
-        default=250.0,
+        default=None,
         ge=0,
         examples=[250.0],
-        description="Costo adicional diario de la cobertura",
+        description="Costo diario del seguro",
     )
 
 
@@ -268,4 +268,4 @@ class ClienteOut(BaseModel):
 
 
 class ResumenLiberacionOut(BaseModel):
-    liberadas: int = Field(..., examples=[3], description="Total de registros procesados y liberados")
+    liberadas: list[str] = Field(..., examples=[["RES-0001"]], description="Folios o ids liberados")

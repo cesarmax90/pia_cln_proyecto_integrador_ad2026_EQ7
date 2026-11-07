@@ -20,11 +20,12 @@ Sistema de lógica de negocio para **NovaRent**, empresa de renta de automóvile
 | Validación de cantidades, disponibilidad, importes y transiciones | `Dinero`, `PeriodoRenta`, `ServicioDisponibilidad`, `MaquinaEstados` |
 | API REST con OpenAPI y códigos 200/201/400/404/409/422 | `src/api` · [`docs/api/contrato.md`](docs/api/contrato.md) · [`docs/api/openapi.json`](docs/api/openapi.json) · `/docs` |
 | Persistencia (PostgreSQL / SQLite) con Repository y Unit of Work | `src/infrastructure` |
-| Pruebas unitarias, de integración y de API con cobertura ≥ 80 % | `tests/` → **354 pruebas, 98.5 % de cobertura** (356 pruebas en PostgreSQL) |
+| Pruebas unitarias, de integración y de API con cobertura ≥ 80 % | `tests/` → **373 pruebas, 98.5 % de cobertura** (375 pruebas en PostgreSQL) |
 | Docker Compose (DB + App + Tests) | `docker-compose.yml` · `Dockerfile` |
 | CI/CD | `.github/workflows/ci.yml` (ruff → pruebas en PostgreSQL → docker compose) |
 | Trazabilidad BRD → regla → componente → prueba | [`docs/trazabilidad.md`](docs/trazabilidad.md) |
 | Paquete de datos (120 casos + 20 transiciones) | [`docs/adaptacion_paquete_datos.md`](docs/adaptacion_paquete_datos.md) · `docs/evidencias/*.csv` |
+| Pruebas de reglas de negocio de la Unidad 5 (E9): 3 reglas, 19 casos éxito/error/límite, persistencia y mock | [`docs/pruebas_unidad5.md`](docs/pruebas_unidad5.md) · [`docs/matriz_casos_u5.csv`](docs/matriz_casos_u5.csv) · `tests/test_u5_matriz_casos.py` |
 
 ## Ejecución rápida
 ### Con Docker Compose (recomendado)
@@ -80,7 +81,7 @@ Detalle, diagramas de secuencia, estados y ER en [`docs/architecture/README.md`]
 │   ├── infrastructure/   SQLAlchemy, repositorios, Unit of Work, adaptadores, datos demo
 │   ├── api/              FastAPI: rutas, esquemas, errores
 │   └── validacion_paquete/  ejecuta los 120 casos y 20 transiciones del paquete
-├── tests/                354 pruebas (dominio, infraestructura, servicios, API, paquete de datos)
+├── tests/                373 pruebas (dominio, infraestructura, servicios, API, paquete de datos, U5)
 ├── datos/                CSV del paquete de datos del PIA
 ├── scripts/              demo_flujo.py, exportar_openapi.py
 ├── docker/               inicialización de PostgreSQL para el perfil de pruebas
@@ -92,8 +93,8 @@ Detalle, diagramas de secuencia, estados y ER en [`docs/architecture/README.md`]
 | Verificación | Resultado |
 | :--- | :--- |
 | `ruff check src tests scripts` | Sin errores |
-| `pytest` (SQLite en memoria) | 354 pasan · 98.5 % de cobertura (líneas y ramas) |
-| `pytest` (PostgreSQL 16 real) | 356 pasan · 98.5 % de cobertura |
+| `pytest` (SQLite en memoria) | 373 pasan · 98.5 % de cobertura (líneas y ramas) |
+| `pytest` (PostgreSQL 16 real) | 375 pasan · 98.5 % de cobertura |
 | Paquete de datos | 120 casos y 20 transiciones ejecutados; 0 diferencias contra el oráculo independiente |
 | Evidencia | [`docs/evidencias/`](docs/evidencias/) |
 
