@@ -9,16 +9,23 @@
     "/api/v1/categorias": {
       "get": {
         "tags": [
-          "Catálogo"
+          "1. Catálogo de Vehículos"
         ],
-        "summary": "Lista las categorías de vehículo",
+        "summary": "Consultar tipos de autos, precios por día y depósitos",
+        "description": "### ¿Qué hace esta consulta?\nMuestra todas las gamas de vehículos disponibles junto con su costo por día, depósito en garantía requerido y kilómetros libres diarios.\n\n* **Requisito:** Haz clic en **Authorize** arriba y usa `X-Actor-Id: AGE-01` y `X-Rol: AGENTE` (o `CLIENTE`).",
         "operationId": "listar_categorias_api_v1_categorias_get",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Listado con todas las categorías activas y tarifas vigentes en MXN",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CategoriaOut"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Categorias Api V1 Categorias Get"
+                }
               }
             }
           }
@@ -36,16 +43,23 @@
     "/api/v1/sucursales": {
       "get": {
         "tags": [
-          "Catálogo"
+          "1. Catálogo de Vehículos"
         ],
-        "summary": "Lista las sucursales",
+        "summary": "Consultar sedes y sucursales de entrega",
+        "description": "Obtiene las sucursales oficiales de NovaRent donde se pueden recoger o devolver unidades.",
         "operationId": "listar_sucursales_api_v1_sucursales_get",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Lista de sucursales autorizadas",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SucursalOut"
+                  },
+                  "type": "array",
+                  "title": "Response Listar Sucursales Api V1 Sucursales Get"
+                }
               }
             }
           }
@@ -63,9 +77,10 @@
     "/api/v1/clientes/{cliente_id}": {
       "get": {
         "tags": [
-          "Catálogo"
+          "1. Catálogo de Vehículos"
         ],
-        "summary": "Consulta un cliente (un cliente solo ve el suyo)",
+        "summary": "Consultar expediente de un cliente",
+        "description": "Verifica si el cliente está activo, la fecha de caducidad de su licencia y si cuenta con categoría frecuente.\n\n* **Seguridad:** Un `CLIENTE` solo puede consultar su propio registro. Roles como `AGENTE` o `ADMINISTRACION` pueden consultar a cualquiera.",
         "operationId": "obtener_cliente_api_v1_clientes__cliente_id__get",
         "security": [
           {
@@ -88,10 +103,12 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Ficha del arrendatario con estatus operativo",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ClienteOut"
+                }
               }
             }
           },
@@ -111,9 +128,10 @@
     "/api/v1/disponibilidad": {
       "get": {
         "tags": [
-          "Reservaciones"
+          "2. Reservaciones"
         ],
-        "summary": "US01 · Disponibilidad por sucursal, fechas y categoría",
+        "summary": "US01 · Consultar disponibilidad de autos en fechas",
+        "description": "Calcula en tiempo real cuántas unidades libres hay por categoría en la sucursal seleccionada sin cruces de horario.",
         "operationId": "buscar_disponibilidad_api_v1_disponibilidad_get",
         "security": [
           {
@@ -130,8 +148,13 @@
             "required": true,
             "schema": {
               "type": "string",
+              "description": "Código de la sucursal",
+              "examples": [
+                "SUC-APODACA"
+              ],
               "title": "Sucursal Id"
-            }
+            },
+            "description": "Código de la sucursal"
           },
           {
             "name": "inicio",
@@ -140,8 +163,13 @@
             "schema": {
               "type": "string",
               "format": "date-time",
+              "description": "Inicio de la renta",
+              "examples": [
+                "2026-11-06T09:00:00Z"
+              ],
               "title": "Inicio"
-            }
+            },
+            "description": "Inicio de la renta"
           },
           {
             "name": "fin",
@@ -150,8 +178,13 @@
             "schema": {
               "type": "string",
               "format": "date-time",
+              "description": "Fin de la renta",
+              "examples": [
+                "2026-11-08T09:00:00Z"
+              ],
               "title": "Fin"
-            }
+            },
+            "description": "Fin de la renta"
           },
           {
             "name": "categoria_id",
@@ -166,13 +199,18 @@
                   "type": "null"
                 }
               ],
+              "description": "Categoría específica (opcional)",
+              "examples": [
+                "REN-P001"
+              ],
               "title": "Categoria Id"
-            }
+            },
+            "description": "Categoría específica (opcional)"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Inventario disponible por categoría en el rango de fechas",
             "content": {
               "application/json": {
                 "schema": {
@@ -201,9 +239,10 @@
     "/api/v1/reservaciones": {
       "post": {
         "tags": [
-          "Reservaciones"
+          "2. Reservaciones"
         ],
-        "summary": "US02 · Genera una reservación (garantiza categoría, no unidad)",
+        "summary": "US02 · Crear una nueva solicitud de renta",
+        "description": "Registra la reservación en estado **SOLICITADA**, aplicando las precondiciones de cliente activo y disponibilidad.",
         "operationId": "crear_reservacion_api_v1_reservaciones_post",
         "requestBody": {
           "content": {
@@ -217,7 +256,7 @@
         },
         "responses": {
           "201": {
-            "description": "Successful Response",
+            "description": "Datos de la reservación creada con folio asignado",
             "content": {
               "application/json": {
                 "schema": {
@@ -250,9 +289,10 @@
     "/api/v1/reservaciones/{folio}": {
       "get": {
         "tags": [
-          "Reservaciones"
+          "2. Reservaciones"
         ],
-        "summary": "Consulta una reservación",
+        "summary": "Consultar estado de una reservación por folio",
+        "description": "Obtiene el estatus en la máquina de estados (SOLICITADA, CONFIRMADA, etc.) y los importes calculados.",
         "operationId": "obtener_reservacion_api_v1_reservaciones__folio__get",
         "security": [
           {
@@ -275,7 +315,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Detalle completo de la reservación",
             "content": {
               "application/json": {
                 "schema": {
@@ -300,9 +340,10 @@
     "/api/v1/reservaciones/{folio}/cancelar": {
       "post": {
         "tags": [
-          "Reservaciones"
+          "2. Reservaciones"
         ],
-        "summary": "US03 · Cancela una reservación (gratis con ≥24 h; si no, penalización)",
+        "summary": "US03 · Cancelar reservación",
+        "description": "Transiciona la reserva a CANCELADA. Si se efectúa con ≥24 horas de antelación es gratis ($0 penalización).",
         "operationId": "cancelar_reservacion_api_v1_reservaciones__folio__cancelar_post",
         "security": [
           {
@@ -325,7 +366,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Comprobante de cancelación e importe de penalización",
             "content": {
               "application/json": {
                 "schema": {
@@ -350,16 +391,19 @@
     "/api/v1/reservaciones/liberar-no-shows": {
       "post": {
         "tags": [
-          "Reservaciones"
+          "2. Reservaciones"
         ],
-        "summary": "US04 · Libera reservaciones no-show (job)",
+        "summary": "US04 · Liberar reservaciones de clientes que no llegaron (Job)",
+        "description": "Proceso batch automático que cancela las reservas vencidas y libera los autos bloqueados.",
         "operationId": "liberar_no_shows_api_v1_reservaciones_liberar_no_shows_post",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Cantidad de reservaciones no-show canceladas",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ResumenLiberacionOut"
+                }
               }
             }
           }
@@ -377,9 +421,10 @@
     "/api/v1/reservaciones/{folio}/upgrade/respuesta": {
       "post": {
         "tags": [
-          "Reservaciones"
+          "2. Reservaciones"
         ],
-        "summary": "US09 · El cliente acepta o rechaza el upgrade (lista de espera o reembolso)",
+        "summary": "US09 · Responder ofrecimiento de auto de gama superior",
+        "description": "El cliente decide si acepta un auto de mejor categoría sin costo, entra a lista de espera o cancela con reembolso.",
         "operationId": "responder_upgrade_api_v1_reservaciones__folio__upgrade_respuesta_post",
         "security": [
           {
@@ -412,7 +457,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Reservación actualizada con la elección del cliente",
             "content": {
               "application/json": {
                 "schema": {
@@ -437,9 +482,10 @@
     "/api/v1/reservaciones/{folio}/upgrade/cortesia": {
       "post": {
         "tags": [
-          "Reservaciones"
+          "2. Reservaciones"
         ],
-        "summary": "US10 · Administración otorga un upgrade de cortesía",
+        "summary": "US10 · Otorgar auto de categoría superior por cortesía",
+        "description": "Acción exclusiva de `ADMINISTRACION` para mejorar la gama del auto sin cargo adicional.",
         "operationId": "upgrade_cortesia_api_v1_reservaciones__folio__upgrade_cortesia_post",
         "security": [
           {
@@ -462,7 +508,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Reservación con upgrade aplicado",
             "content": {
               "application/json": {
                 "schema": {
@@ -487,9 +533,10 @@
     "/api/v1/reservaciones/{folio}/entrega": {
       "post": {
         "tags": [
-          "Entrega"
+          "3. Entrega de Vehículo"
         ],
-        "summary": "US05/US08 · Valida documentos, asigna unidad u ofrece upgrade sin costo",
+        "summary": "US05/US08 · Iniciar entrega y asignar auto en mostrador",
+        "description": "El agente valida la licencia de conducir del cliente y asigna la unidad física que saldrá de patio.",
         "operationId": "iniciar_entrega_api_v1_reservaciones__folio__entrega_post",
         "security": [
           {
@@ -522,7 +569,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Comprobante de asignación física de la unidad",
             "content": {
               "application/json": {
                 "schema": {
@@ -547,9 +594,10 @@
     "/api/v1/inspecciones/entrega": {
       "post": {
         "tags": [
-          "Entrega"
+          "3. Entrega de Vehículo"
         ],
-        "summary": "US06 · Registra el checklist de entrega con fotos",
+        "summary": "US06 · Registrar inspección física de salida",
+        "description": "Personal de patio registra el nivel de gasolina en octavos (0-8), kilometraje inicial y fotos de daños previos.",
         "operationId": "registrar_inspeccion_entrega_api_v1_inspecciones_entrega_post",
         "requestBody": {
           "content": {
@@ -563,7 +611,7 @@
         },
         "responses": {
           "201": {
-            "description": "Successful Response",
+            "description": "Checklist inicial registrado",
             "content": {
               "application/json": {
                 "schema": {
@@ -596,9 +644,10 @@
     "/api/v1/inspecciones/{inspeccion_id}/firma": {
       "post": {
         "tags": [
-          "Entrega"
+          "3. Entrega de Vehículo"
         ],
-        "summary": "US07 · Firma digital del cliente (el checklist queda inmutable)",
+        "summary": "US07 · Firma digital del cliente para cerrar inspección",
+        "description": "El arrendatario acepta las condiciones iniciales del auto. Tras la firma, el registro queda inmutable.",
         "operationId": "firmar_inspeccion_api_v1_inspecciones__inspeccion_id__firma_post",
         "security": [
           {
@@ -631,7 +680,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Inspección cerrada y protegida contra modificaciones",
             "content": {
               "application/json": {
                 "schema": {
@@ -656,9 +705,10 @@
     "/api/v1/contratos": {
       "post": {
         "tags": [
-          "Contratos"
+          "3. Entrega de Vehículo"
         ],
-        "summary": "Abre el contrato (checklist firmado + depósito retenido)",
+        "summary": "Apertura de contrato formal de arrendamiento",
+        "description": "Crea el contrato de renta. Requiere que la inspección esté firmada y el depósito retenido.",
         "operationId": "abrir_contrato_api_v1_contratos_post",
         "requestBody": {
           "content": {
@@ -672,7 +722,7 @@
         },
         "responses": {
           "201": {
-            "description": "Successful Response",
+            "description": "Contrato oficial activo",
             "content": {
               "application/json": {
                 "schema": {
@@ -705,9 +755,10 @@
     "/api/v1/contratos/{contrato_id}": {
       "get": {
         "tags": [
-          "Contratos"
+          "3. Entrega de Vehículo"
         ],
-        "summary": "Consulta un contrato",
+        "summary": "Consultar datos de un contrato de renta",
+        "description": "Devuelve el auto asignado, fianza retenida, cobertura contratada y estado del contrato.",
         "operationId": "obtener_contrato_api_v1_contratos__contrato_id__get",
         "security": [
           {
@@ -730,7 +781,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Detalle del contrato consultado",
             "content": {
               "application/json": {
                 "schema": {
@@ -755,9 +806,10 @@
     "/api/v1/contratos/{contrato_id}/extensiones": {
       "post": {
         "tags": [
-          "Contratos"
+          "3. Entrega de Vehículo"
         ],
-        "summary": "US11/US12 · Solicita extensión (≤48 h agente; >48 h Administración)",
+        "summary": "US11/US12 · Solicitar tiempo extra de uso del auto",
+        "description": "Añade horas a la fecha de devolución. Hasta 48 h lo autoriza un agente; más de 48 h requiere visto bueno administrativo.",
         "operationId": "extender_renta_api_v1_contratos__contrato_id__extensiones_post",
         "security": [
           {
@@ -790,7 +842,7 @@
         },
         "responses": {
           "201": {
-            "description": "Successful Response",
+            "description": "Comprobante de extensión de tiempo",
             "content": {
               "application/json": {
                 "schema": {
@@ -815,9 +867,10 @@
     "/api/v1/contratos/{contrato_id}/extensiones/{extension_id}/aprobacion": {
       "post": {
         "tags": [
-          "Contratos"
+          "3. Entrega de Vehículo"
         ],
-        "summary": "US12 · Administración aprueba una extensión mayor a 48 h",
+        "summary": "US12 · Autorizar extensión extraordinaria (> 48 h)",
+        "description": "Aprobación formal de `ADMINISTRACION` para retener la unidad por varios días extras.",
         "operationId": "aprobar_extension_api_v1_contratos__contrato_id__extensiones__extension_id__aprobacion_post",
         "security": [
           {
@@ -849,7 +902,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Extensión validada y confirmada",
             "content": {
               "application/json": {
                 "schema": {
@@ -874,9 +927,10 @@
     "/api/v1/contratos/{contrato_id}/conductores": {
       "post": {
         "tags": [
-          "Contratos"
+          "3. Entrega de Vehículo"
         ],
-        "summary": "Agrega un conductor adicional con licencia vigente",
+        "summary": "Registrar conductor secundario autorizado",
+        "description": "Añade a una persona adicional con licencia de conducir vigente para que el seguro lo cubra legalmente.",
         "operationId": "agregar_conductor_api_v1_contratos__contrato_id__conductores_post",
         "security": [
           {
@@ -909,7 +963,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Contrato actualizado con el nuevo conductor",
             "content": {
               "application/json": {
                 "schema": {
@@ -934,9 +988,10 @@
     "/api/v1/contratos/{contrato_id}/inspeccion-devolucion": {
       "post": {
         "tags": [
-          "Devolución y cargos"
+          "4. Devolución y Liquidación"
         ],
-        "summary": "US13 · Registra el checklist de devolución",
+        "summary": "US13 · Registrar revisión física de retorno del auto",
+        "description": "Recepción de la unidad en patio: registra gasolina restante, kilometraje final y fotos de nuevos daños si existen.",
         "operationId": "registrar_inspeccion_devolucion_api_v1_contratos__contrato_id__inspeccion_devolucion_post",
         "security": [
           {
@@ -969,7 +1024,7 @@
         },
         "responses": {
           "201": {
-            "description": "Successful Response",
+            "description": "Checklist final registrado",
             "content": {
               "application/json": {
                 "schema": {
@@ -994,9 +1049,10 @@
     "/api/v1/contratos/{contrato_id}/devolucion": {
       "post": {
         "tags": [
-          "Devolución y cargos"
+          "4. Devolución y Liquidación"
         ],
-        "summary": "US14-US16 · Procesa la devolución y dispara el cálculo de cargos",
+        "summary": "US14-US16 · Cerrar contrato y liquidar cargos automáticos",
+        "description": "Finaliza formalmente la renta. Calcula de forma automática horas de retraso, faltante de gasolina y kilometraje extra.",
         "operationId": "procesar_devolucion_api_v1_contratos__contrato_id__devolucion_post",
         "security": [
           {
@@ -1019,7 +1075,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Contrato cerrado y enviado a liquidación financiera",
             "content": {
               "application/json": {
                 "schema": {
@@ -1044,9 +1100,10 @@
     "/api/v1/contratos/{contrato_id}/liquidacion": {
       "get": {
         "tags": [
-          "Devolución y cargos"
+          "4. Devolución y Liquidación"
         ],
-        "summary": "Consulta la liquidación (cargos y depósito)",
+        "summary": "Consultar balance económico final del contrato",
+        "description": "Desglose financiero: total cobrado por renta, penalizaciones, fianza a reembolsar y saldo pendiente.",
         "operationId": "obtener_liquidacion_api_v1_contratos__contrato_id__liquidacion_get",
         "security": [
           {
@@ -1069,7 +1126,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Liquidación detallada de la renta",
             "content": {
               "application/json": {
                 "schema": {
@@ -1094,9 +1151,10 @@
     "/api/v1/contratos/{contrato_id}/liquidacion/cargos/{cargo_id}/aprobacion-danio": {
       "post": {
         "tags": [
-          "Devolución y cargos"
+          "4. Devolución y Liquidación"
         ],
-        "summary": "Administración fija el monto de un cargo por daño",
+        "summary": "Fijar costo de reparación de daño detectado",
+        "description": "Permite al rol `ADMINISTRACION` ingresar la cotización real del taller mecánico para descontarla del depósito.",
         "operationId": "aprobar_cargo_danio_api_v1_contratos__contrato_id__liquidacion_cargos__cargo_id__aprobacion_danio_post",
         "security": [
           {
@@ -1138,7 +1196,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Liquidación actualizada con el costo del daño fijado",
             "content": {
               "application/json": {
                 "schema": {
@@ -1163,9 +1221,10 @@
     "/api/v1/contratos/{contrato_id}/liquidacion/cargos/{cargo_id}/disputa": {
       "post": {
         "tags": [
-          "Devolución y cargos"
+          "4. Devolución y Liquidación"
         ],
-        "summary": "US17 · El cliente disputa un cargo",
+        "summary": "US17 · Impugnar formalmente un cargo retenido",
+        "description": "El cliente abre una inconformidad con su argumento si considera que un cobro (por daño o gasolina) no procede.",
         "operationId": "disputar_cargo_api_v1_contratos__contrato_id__liquidacion_cargos__cargo_id__disputa_post",
         "security": [
           {
@@ -1207,7 +1266,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Estado de la liquidación con la disputa abierta",
             "content": {
               "application/json": {
                 "schema": {
@@ -1232,9 +1291,10 @@
     "/api/v1/contratos/{contrato_id}/liquidacion/cargos/{cargo_id}/evidencia": {
       "get": {
         "tags": [
-          "Devolución y cargos"
+          "4. Devolución y Liquidación"
         ],
-        "summary": "US17 · Compara la evidencia de entrega y devolución",
+        "summary": "US17 · Comparar fotos de entrega vs devolución",
+        "description": "Herramienta de auditoría que presenta las fotos de salida contra las de entrada para resolver una controversia.",
         "operationId": "evidencia_disputa_api_v1_contratos__contrato_id__liquidacion_cargos__cargo_id__evidencia_get",
         "security": [
           {
@@ -1266,7 +1326,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Comparativa fotográfica de entrega y devolución",
             "content": {
               "application/json": {
                 "schema": {
@@ -1291,9 +1351,10 @@
     "/api/v1/contratos/{contrato_id}/liquidacion/cargos/{cargo_id}/resolucion": {
       "post": {
         "tags": [
-          "Devolución y cargos"
+          "4. Devolución y Liquidación"
         ],
-        "summary": "US17 · Administración resuelve la disputa",
+        "summary": "US17 · Resolver controversia (Confirmar o anular cobro)",
+        "description": "Resolución de `ADMINISTRACION`. Si se anula, el cobro se cancela y se reintegra al saldo a devolver.",
         "operationId": "resolver_disputa_api_v1_contratos__contrato_id__liquidacion_cargos__cargo_id__resolucion_post",
         "security": [
           {
@@ -1335,7 +1396,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Liquidación con la resolución aplicada",
             "content": {
               "application/json": {
                 "schema": {
@@ -1360,16 +1421,19 @@
     "/api/v1/liquidaciones/liberar-depositos": {
       "post": {
         "tags": [
-          "Devolución y cargos"
+          "4. Devolución y Liquidación"
         ],
-        "summary": "US20 · Libera depósitos a 5 días hábiles sin incidencias (job diario)",
+        "summary": "US20 · Liberar fianzas bancarias tras 5 días (Job)",
+        "description": "Proceso financiero programado. Libera los depósitos retenidos una vez cumplidos 5 días hábiles sin incidencias.",
         "operationId": "liberar_depositos_api_v1_liquidaciones_liberar_depositos_post",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Total de depósitos en garantía liberados",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ResumenLiberacionOut"
+                }
               }
             }
           }
@@ -1387,9 +1451,10 @@
     "/api/v1/sucursales/{sucursal_id}/flota": {
       "get": {
         "tags": [
-          "Flota y limpieza"
+          "Flota y Reportes"
         ],
-        "summary": "Resumen de flota por estado y categoría",
+        "summary": "Consultar estatus de inventario en sucursal",
+        "description": "Agrupa todos los vehículos de la sucursal por estado operativo (Disponible, Rentado, Limpieza, Taller).",
         "operationId": "resumen_flota_api_v1_sucursales__sucursal_id__flota_get",
         "security": [
           {
@@ -1412,7 +1477,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Resumen de flota por categoría y estado",
             "content": {
               "application/json": {
                 "schema": {
@@ -1437,9 +1502,10 @@
     "/api/v1/vehiculos/{vehiculo_id}": {
       "get": {
         "tags": [
-          "Flota y limpieza"
+          "Flota y Reportes"
         ],
-        "summary": "Consulta un vehículo",
+        "summary": "Consultar ficha técnica y odómetro de una unidad",
+        "description": "Regresa placas, número de serie, modelo, nivel de combustible y kilometraje acumulado de un vehículo.",
         "operationId": "obtener_vehiculo_api_v1_vehiculos__vehiculo_id__get",
         "security": [
           {
@@ -1462,7 +1528,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Ficha técnica de la unidad",
             "content": {
               "application/json": {
                 "schema": {
@@ -1487,13 +1553,14 @@
     "/api/v1/limpieza/tareas": {
       "get": {
         "tags": [
-          "Flota y limpieza"
+          "Flota y Reportes"
         ],
-        "summary": "Tareas de limpieza abiertas",
+        "summary": "Listar autos pendientes de lavado y preparación",
+        "description": "Cola de unidades que han sido devueltas por clientes y requieren sanitización antes de volver a rentarse.",
         "operationId": "tareas_abiertas_api_v1_limpieza_tareas_get",
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Lista de tareas activas para el equipo de patio y limpieza",
             "content": {
               "application/json": {
                 "schema": {
@@ -1520,9 +1587,10 @@
     "/api/v1/limpieza/tareas/{tarea_id}/completar": {
       "post": {
         "tags": [
-          "Flota y limpieza"
+          "Flota y Reportes"
         ],
-        "summary": "US18 · Marca el vehículo como listo (vuelve a Disponible)",
+        "summary": "US18 · Concluir limpieza y poner auto en Disponible",
+        "description": "El personal marca la unidad lista; la máquina de estados la regresa automáticamente al inventario disponible.",
         "operationId": "completar_tarea_api_v1_limpieza_tareas__tarea_id__completar_post",
         "security": [
           {
@@ -1545,7 +1613,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Tarea concluida y unidad lista para rentar",
             "content": {
               "application/json": {
                 "schema": {
@@ -1570,9 +1638,10 @@
     "/api/v1/reportes/ocupacion": {
       "get": {
         "tags": [
-          "Reportes"
+          "Flota y Reportes"
         ],
-        "summary": "US19 · Ocupación, ingresos y rotación de flota",
+        "summary": "US19 · Reporte gerencial de ocupación y facturación",
+        "description": "Muestra el porcentaje de utilización de vehículos, total de ingresos generados y rotación en un periodo.",
         "operationId": "reporte_ocupacion_api_v1_reportes_ocupacion_get",
         "security": [
           {
@@ -1589,8 +1658,13 @@
             "required": true,
             "schema": {
               "type": "string",
+              "description": "Sucursal a auditar",
+              "examples": [
+                "SUC-APODACA"
+              ],
               "title": "Sucursal Id"
-            }
+            },
+            "description": "Sucursal a auditar"
           },
           {
             "name": "desde",
@@ -1599,11 +1673,13 @@
             "schema": {
               "type": "string",
               "format": "date-time",
+              "description": "Inicio del periodo",
               "examples": [
                 "2026-11-01T00:00:00Z"
               ],
               "title": "Desde"
-            }
+            },
+            "description": "Inicio del periodo"
           },
           {
             "name": "hasta",
@@ -1612,16 +1688,18 @@
             "schema": {
               "type": "string",
               "format": "date-time",
+              "description": "Fin del periodo",
               "examples": [
                 "2026-12-01T00:00:00Z"
               ],
               "title": "Hasta"
-            }
+            },
+            "description": "Fin del periodo"
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Métricas consolidadas de rentabilidad y flota",
             "content": {
               "application/json": {
                 "schema": {
@@ -1751,20 +1829,173 @@
         ],
         "title": "CargoDTO"
       },
-      "ConductorIn": {
+      "CategoriaOut": {
         "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identificador único del tipo de vehículo",
+            "examples": [
+              "REN-P001"
+            ]
+          },
           "nombre": {
             "type": "string",
-            "title": "Nombre"
+            "title": "Nombre",
+            "description": "Nombre de la categoría",
+            "examples": [
+              "Sedán Económico"
+            ]
           },
-          "licencia_numero": {
+          "nivel": {
+            "type": "integer",
+            "title": "Nivel",
+            "description": "Nivel jerárquico de gama (usado para upgrades)",
+            "examples": [
+              1
+            ]
+          },
+          "tarifa_diaria": {
             "type": "string",
-            "title": "Licencia Numero"
+            "title": "Tarifa Diaria",
+            "description": "Tarifa base de renta por día en MXN",
+            "examples": [
+              "850.00"
+            ]
+          },
+          "deposito": {
+            "type": "string",
+            "title": "Deposito",
+            "description": "Fianza en garantía retenida temporalmente",
+            "examples": [
+              "3000.00"
+            ]
+          },
+          "km_incluido_por_dia": {
+            "type": "integer",
+            "title": "Km Incluido Por Dia",
+            "description": "Kilómetros libres diarios sin cargo extra",
+            "examples": [
+              200
+            ]
+          },
+          "habilitada": {
+            "type": "boolean",
+            "title": "Habilitada",
+            "description": "Indica si esta gama está activa para rentar",
+            "examples": [
+              true
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "nivel",
+          "tarifa_diaria",
+          "deposito",
+          "km_incluido_por_dia",
+          "habilitada"
+        ],
+        "title": "CategoriaOut"
+      },
+      "ClienteOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Identificador único del cliente",
+            "examples": [
+              "REN-C001"
+            ]
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre",
+            "description": "Nombre completo del titular",
+            "examples": [
+              "Juan Pérez Gómez"
+            ]
+          },
+          "frecuente": {
+            "type": "boolean",
+            "title": "Frecuente",
+            "description": "Tiene estatus preferente con beneficios",
+            "examples": [
+              true
+            ]
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo",
+            "description": "Cuenta habilitada para contratar rentas",
+            "examples": [
+              true
+            ]
           },
           "licencia_vigencia": {
             "type": "string",
             "format": "date",
-            "title": "Licencia Vigencia"
+            "title": "Licencia Vigencia",
+            "description": "Fecha de vigencia de su licencia",
+            "examples": [
+              "2027-05-20"
+            ]
+          },
+          "tarjeta_ultimos4": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tarjeta Ultimos4",
+            "description": "Últimos dígitos de la tarjeta guardada",
+            "examples": [
+              "4321"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "frecuente",
+          "activo",
+          "licencia_vigencia",
+          "tarjeta_ultimos4"
+        ],
+        "title": "ClienteOut"
+      },
+      "ConductorIn": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "title": "Nombre",
+            "description": "Nombre del conductor adicional",
+            "examples": [
+              "María Luisa Peña"
+            ]
+          },
+          "licencia_numero": {
+            "type": "string",
+            "title": "Licencia Numero",
+            "description": "Número oficial de licencia de conducir",
+            "examples": [
+              "LIC-NL-884920"
+            ]
+          },
+          "licencia_vigencia": {
+            "type": "string",
+            "format": "date",
+            "title": "Licencia Vigencia",
+            "description": "Fecha de caducidad de la licencia",
+            "examples": [
+              "2027-10-15"
+            ]
           }
         },
         "additionalProperties": false,
@@ -1874,15 +2105,27 @@
         "properties": {
           "folio": {
             "type": "string",
-            "title": "Folio"
+            "title": "Folio",
+            "description": "Folio de la reservación vinculada al contrato",
+            "examples": [
+              "RES-1A2B3C4D"
+            ]
           },
           "vehiculo_id": {
             "type": "string",
-            "title": "Vehiculo Id"
+            "title": "Vehiculo Id",
+            "description": "Identificador de la unidad entregada",
+            "examples": [
+              "VEH-001"
+            ]
           },
           "inspeccion_id": {
             "type": "string",
-            "title": "Inspeccion Id"
+            "title": "Inspeccion Id",
+            "description": "ID del checklist de entrega previamente firmado",
+            "examples": [
+              "INS-ENT-001"
+            ]
           },
           "cobertura_tipo": {
             "anyOf": [
@@ -1893,7 +2136,11 @@
                 "type": "null"
               }
             ],
-            "title": "Cobertura Tipo"
+            "title": "Cobertura Tipo",
+            "description": "Tipo de cobertura opcional",
+            "examples": [
+              "AMPLIA"
+            ]
           },
           "cobertura_costo_diario": {
             "anyOf": [
@@ -1905,7 +2152,11 @@
                 "type": "null"
               }
             ],
-            "title": "Cobertura Costo Diario"
+            "title": "Cobertura Costo Diario",
+            "description": "Costo diario del seguro",
+            "examples": [
+              250.0
+            ]
           }
         },
         "additionalProperties": false,
@@ -1948,15 +2199,17 @@
           "zona": {
             "type": "string",
             "title": "Zona",
+            "description": "Área del auto donde se observa el daño",
             "examples": [
-              "puerta delantera"
+              "Puerta delantera derecha"
             ]
           },
           "descripcion": {
             "type": "string",
             "title": "Descripcion",
+            "description": "Descripción detallada del desperfecto físico",
             "examples": [
-              "rayón profundo"
+              "Rayón superficial en pintura de 15 cm"
             ]
           },
           "fotos": {
@@ -1964,7 +2217,8 @@
               "$ref": "#/components/schemas/FotoIn"
             },
             "type": "array",
-            "title": "Fotos"
+            "title": "Fotos",
+            "description": "Fotografías de respaldo del desperfecto"
           }
         },
         "additionalProperties": false,
@@ -2008,8 +2262,9 @@
           "motivo": {
             "type": "string",
             "title": "Motivo",
+            "description": "Motivo por el que el cliente no acepta el cobro",
             "examples": [
-              "El daño ya existía al recibir la unidad"
+              "El rayón ya existía en la foto frontal de entrega inicial."
             ]
           }
         },
@@ -2072,6 +2327,7 @@
           "licencia_numero": {
             "type": "string",
             "title": "Licencia Numero",
+            "description": "Número de licencia de conducir vigente para verificar en mostrador",
             "examples": [
               "LIC-REN-C001"
             ]
@@ -2158,6 +2414,7 @@
             "type": "integer",
             "exclusiveMinimum": 0.0,
             "title": "Horas",
+            "description": "Horas adicionales de renta solicitadas",
             "examples": [
               24
             ]
@@ -2175,8 +2432,9 @@
           "firmante": {
             "type": "string",
             "title": "Firmante",
+            "description": "Nombre completo de quien firma de conformidad el checklist",
             "examples": [
-              "Arrendatario 01"
+              "César Maximiliano Peña Mendoza"
             ]
           }
         },
@@ -2211,8 +2469,9 @@
           "nombre": {
             "type": "string",
             "title": "Nombre",
+            "description": "Nombre del archivo de fotografía de evidencia",
             "examples": [
-              "frente.jpg"
+              "frente_auto.jpg"
             ]
           },
           "contenido_base64": {
@@ -2225,7 +2484,10 @@
               }
             ],
             "title": "Contenido Base64",
-            "description": "Contenido en base64 (opcional en demos)"
+            "description": "Cadena base64 de la imagen (opcional en entorno de prueba)",
+            "examples": [
+              null
+            ]
           }
         },
         "additionalProperties": false,
@@ -2330,12 +2592,20 @@
             "type": "integer",
             "maximum": 8.0,
             "minimum": 0.0,
-            "title": "Combustible Octavos"
+            "title": "Combustible Octavos",
+            "description": "Nivel de gasolina al recibir el auto (si falta se cobrará la diferencia)",
+            "examples": [
+              7
+            ]
           },
           "kilometraje": {
             "type": "integer",
             "minimum": 0.0,
-            "title": "Kilometraje"
+            "title": "Kilometraje",
+            "description": "Odómetro final para validar límite de kilometraje",
+            "examples": [
+              45650
+            ]
           },
           "fotos": {
             "items": {
@@ -2343,14 +2613,16 @@
             },
             "type": "array",
             "minItems": 1,
-            "title": "Fotos"
+            "title": "Fotos",
+            "description": "Fotos tomadas durante la recepción del vehículo"
           },
           "danios": {
             "items": {
               "$ref": "#/components/schemas/DanioIn"
             },
             "type": "array",
-            "title": "Danios"
+            "title": "Danios",
+            "description": "Nuevos daños no reportados al inicio"
           }
         },
         "additionalProperties": false,
@@ -2367,25 +2639,37 @@
           "folio": {
             "type": "string",
             "title": "Folio",
-            "description": "Folio de la reservación que se entrega",
+            "description": "Folio de la reservación aprobada que se entrega",
             "examples": [
               "RES-1A2B3C4D"
             ]
           },
           "vehiculo_id": {
             "type": "string",
-            "title": "Vehiculo Id"
+            "title": "Vehiculo Id",
+            "description": "Identificador del vehículo físico asignado en patio",
+            "examples": [
+              "VEH-001"
+            ]
           },
           "combustible_octavos": {
             "type": "integer",
             "maximum": 8.0,
             "minimum": 0.0,
-            "title": "Combustible Octavos"
+            "title": "Combustible Octavos",
+            "description": "Nivel de combustible en octavos (8 = Tanque lleno)",
+            "examples": [
+              8
+            ]
           },
           "kilometraje": {
             "type": "integer",
             "minimum": 0.0,
-            "title": "Kilometraje"
+            "title": "Kilometraje",
+            "description": "Lectura del odómetro al momento de salir de patio",
+            "examples": [
+              45200
+            ]
           },
           "fotos": {
             "items": {
@@ -2393,14 +2677,16 @@
             },
             "type": "array",
             "minItems": 1,
-            "title": "Fotos"
+            "title": "Fotos",
+            "description": "Fotos del estado general de la unidad al entregarse"
           },
           "danios": {
             "items": {
               "$ref": "#/components/schemas/DanioIn"
             },
             "type": "array",
-            "title": "Danios"
+            "title": "Danios",
+            "description": "Daños preexistentes registrados en el checklist"
           }
         },
         "additionalProperties": false,
@@ -2478,8 +2764,9 @@
               }
             ],
             "title": "Monto",
+            "description": "Monto en MXN a cobrar por reparación del daño",
             "examples": [
-              "800.00"
+              "1200.00"
             ]
           }
         },
@@ -2634,6 +2921,7 @@
           "cliente_id": {
             "type": "string",
             "title": "Cliente Id",
+            "description": "ID del cliente registrado (REN-C001 a REN-C040)",
             "examples": [
               "REN-C001"
             ]
@@ -2641,6 +2929,7 @@
           "categoria_id": {
             "type": "string",
             "title": "Categoria Id",
+            "description": "Código de la categoría de vehículo (ej. REN-P001 para Sedán)",
             "examples": [
               "REN-P001"
             ]
@@ -2648,6 +2937,7 @@
           "sucursal_id": {
             "type": "string",
             "title": "Sucursal Id",
+            "description": "Sucursal de entrega pactada",
             "examples": [
               "SUC-APODACA"
             ]
@@ -2656,6 +2946,7 @@
             "type": "string",
             "format": "date-time",
             "title": "Inicio",
+            "description": "Fecha y hora de inicio de renta (formato ISO 8601)",
             "examples": [
               "2026-11-06T09:00:00Z"
             ]
@@ -2664,6 +2955,7 @@
             "type": "string",
             "format": "date-time",
             "title": "Fin",
+            "description": "Fecha y hora de devolución pactada",
             "examples": [
               "2026-11-08T09:00:00Z"
             ]
@@ -2688,7 +2980,11 @@
               "CONFIRMADO",
               "ANULADO"
             ],
-            "title": "Resolucion"
+            "title": "Resolucion",
+            "description": "Decisión administrativa sobre la disputa",
+            "examples": [
+              "CONFIRMADO"
+            ]
           }
         },
         "additionalProperties": false,
@@ -2731,6 +3027,54 @@
           "por_categoria"
         ],
         "title": "ResumenFlotaDTO"
+      },
+      "ResumenLiberacionOut": {
+        "properties": {
+          "liberadas": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Liberadas",
+            "description": "Folios o ids liberados",
+            "examples": [
+              [
+                "RES-0001"
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "liberadas"
+        ],
+        "title": "ResumenLiberacionOut"
+      },
+      "SucursalOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Código de la sucursal",
+            "examples": [
+              "SUC-APODACA"
+            ]
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre",
+            "description": "Nombre público de la sede",
+            "examples": [
+              "Sucursal Apodaca Centro"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre"
+        ],
+        "title": "SucursalOut"
       },
       "TareaLimpiezaDTO": {
         "properties": {
@@ -2783,7 +3127,11 @@
               "RECHAZAR_LISTA_ESPERA",
               "RECHAZAR_REEMBOLSO"
             ],
-            "title": "Respuesta"
+            "title": "Respuesta",
+            "description": "Decisión del cliente ante oferta de cambio de gama de auto",
+            "examples": [
+              "ACEPTAR"
+            ]
           }
         },
         "additionalProperties": false,
